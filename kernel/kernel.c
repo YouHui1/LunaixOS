@@ -1,6 +1,9 @@
 #include <lunaix/tty/tty.h>
 #include <lunaix/arch/gdt.h>
 #include <libc/string.h>
+#include <lunaix/arch/idt.h>
+#include <lunaix/interrupts/types.h>
+#include <lunaix/interrupts/interrupts.h>
 
 void _kernel_init()
 {

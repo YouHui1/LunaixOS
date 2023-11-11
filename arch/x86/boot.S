@@ -35,6 +35,12 @@
         movw _gdt_limit, %ax /* 不能直接把立即数放入栈中 */
         movw %ax, (%esp)
         lgdt (%esp)
+
+        movl $_idt, 2(%esp)
+        movw _idt_limit, %ax /* 不能直接把立即数放入栈中 */
+        movw %ax, (%esp)
+        lidt (%esp)
+
         addl $0x6, %esp
 
         /* index 3-15位，处于第4位，因此为0x10 */
