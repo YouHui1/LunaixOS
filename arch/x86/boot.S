@@ -31,6 +31,7 @@
         call _kernel_init
 
         subl $0x6, %esp
+
         movl $_gdt, 2(%esp)
         movw _gdt_limit, %ax /* 不能直接把立即数放入栈中 */
         movw %ax, (%esp)
