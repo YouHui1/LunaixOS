@@ -3,7 +3,7 @@
 
 void isr0 (isr_param* param) {
     tty_clear();
-    tty_put_str("panic");
+    tty_put_str("PANIC");
 }
 
 void interrupt_handler(isr_param* param) {

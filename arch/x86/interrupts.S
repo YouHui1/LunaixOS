@@ -18,7 +18,7 @@
     interrupt_wrapper:
 
         /* 保存旧的esp值 */
-        mov %esp, %eax
+        movl %esp, %eax
         /* 保证16位对齐，将末四位清零 */
         andl $0xfffffff0, %esp
         subl $16, %esp

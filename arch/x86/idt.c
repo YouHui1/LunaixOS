@@ -12,7 +12,7 @@ void _set_idt_entry(uint32_t vector, uint16_t seg_selector, void (*isr)(), uint8
     uintptr_t offset = (uintptr_t)isr;
     _idt[vector] = (offset & 0xffff0000) | IDT_ATTR(dpl);
     _idt[vector] <<= 32;
-    _idt[vector] = (seg_selector << 16) | (offset & 0x0000ffff);
+    _idt[vector] |= (seg_selector << 16) | (offset & 0x0000ffff);
 
 }
 //

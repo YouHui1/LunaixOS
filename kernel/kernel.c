@@ -1,7 +1,7 @@
 #include <lunaix/tty/tty.h>
 #include <lunaix/arch/gdt.h>
-#include <libc/string.h>
 #include <lunaix/arch/idt.h>
+// #include <libc/string.h>
 // #include <lunaix/interrupts/types.h>
 // #include <lunaix/interrupts/interrupts.h>
 
@@ -26,9 +26,9 @@ void _kernel_main(void* info_table)
     // str[99] = '\n';
     // tty_set_theme(VGA_COLOR_LIGHT_BLUE, VGA_COLOR_BLACK);
     // tty_put_str(str);
-    tty_set_theme(VGA_COLOR_LIGHT_MAGENTA, VGA_COLOR_WHITE);
+    tty_set_theme(VGA_COLOR_LIGHT_MAGENTA, VGA_COLOR_BLACK);
     tty_put_str("clear\n");
 
     // return 1 / 0;
-    __asm__("int $0");
+    // __asm__("int $0");
 }
