@@ -1,6 +1,13 @@
 #include <stdint.h>
 #include <libc/string.h>
 
+/**
+ * @brief 内存复制
+ * @param {void*} dest
+ * @param {void*} src
+ * @param {size_t} num
+ * @return {*}
+ */
 void* memcpy(void* dest, const void* src, size_t num) {
     uint8_t* dest_ptr = (uint8_t*)dest;
     const uint8_t* src_ptr = (const uint8_t*)src;
@@ -11,7 +18,7 @@ void* memcpy(void* dest, const void* src, size_t num) {
 }
 
 /**
- * @description: 区别于memcpy做了安全的复制，防止源与目的内存区域的重叠情况
+ * @brief 区别于memcpy做了安全的复制，防止源与目的内存区域的重叠情况
  * @param {void*} dest
  * @param {void*} src
  * @param {size_t} num

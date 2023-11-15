@@ -22,9 +22,7 @@ void tty_put_char(char chr) {
             tty_x += 4;
             break;
         case '\n':
-            tty_x = 0;
             tty_y++;
-            break;
         case '\r':
             tty_x = 0;
             break;
