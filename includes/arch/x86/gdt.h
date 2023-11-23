@@ -1,3 +1,6 @@
+#ifndef __LUNAIX_GDT_H
+#define __LUNAIX_GDT_H 1
+
 #define SD_TYPE(x)              (x << 8)  /* Type */
 #define SD_CODE_DATA(x)         (x << 12) /* S */
 #define SD_DPL(x)               (x << 13) /* DPL */
@@ -51,3 +54,5 @@
 
 
 void _init_gdt();
+
+#endif

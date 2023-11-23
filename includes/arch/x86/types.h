@@ -1,3 +1,6 @@
+#ifndef __LUNAIX_TYPES_H
+#define __LUNAIX_TYPES_H
+
 // Ref: Intel Manuel Vol.3 Figure 6-1
 #define FAULT_DIVISION_ERROR            0x0
 #define FAULT_TRAP_DEBUG_EXCEPTION      0x1
@@ -21,3 +24,6 @@
 #define FAULT_SIMD_FP_EXCEPTION         0x13
 #define FAULT_VIRTUALIZATION_EXCEPTION  0x14
 #define FAULT_CONTROL_PROTECTION        0x15
+
+
+#endif

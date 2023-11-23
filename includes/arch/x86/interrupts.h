@@ -1,3 +1,6 @@
+#ifndef __LUNAIX_INTERRUPTS_H
+#define __LUNAIX_INTERRUPTS_H
+
 /* 禁止使用struct alignment，使得结构体内部元素紧密靠在一起 */
 #pragma pack(push, 1)
 typedef struct {
@@ -12,3 +15,5 @@ typedef struct {
 
 void _asm_isr0();
 void interrupt_handler(isr_param* param);
+
+#endif
