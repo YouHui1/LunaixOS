@@ -26,3 +26,111 @@ extern uint8_t __kernel_start;
 extern uint8_t __kernel_end;
 extern uint8_t __init_hhk_end;
 extern uint8_t _k_stack;
+
+void _init_page(ptd_t* ptd) {
+    SET_PDE(ptd, 0, PDE(PG_PRESENT, ptd + PG_MAX_ENTRIES));
+
+    /* 对低1MiB空间进行对等映射（Identity mapping），包括VGA，方便内核操作 */
+    for (uint32_t i = 0; i < 256; i++) {
+        SET_PTE(
+            ptd,
+            PG_TABLE_IDENTITY,
+            i,
+            PTE(PG_PERM_RW, (i << 12))
+        );
+    }
+
+    /**
+     * 对等映射hhk_init，分页与地址转换开启时，
+     * 依然能够照常执行最终的jmp指令来跳转至内核的入口点
+     */
+    for (uint32_t i = 0; i < HHK_PAGE_COUNT; i++) {
+        SET_PTE(
+            ptd,
+            PG_TABLE_IDENTITY,
+            256 + i,
+            PTE(PG_PERM_RW, 0x100000 + (i << 12))
+        );
+    }
+
+    /* 将内核重映射到高半区 */
+
+    /* 计算应当映射进的 页目录 和 页表 的条目索引（Entry Index） */
+    uint32_t kernel_pde_index = PD_INDEX(sym_val(__kernel_start));
+    uint32_t kernel_pte_index = PT_INDEX(sym_val(__kernel_start));
+    uint32_t kernel_pg_counts = KERNEL_PAGE_COUNT;
+
+    /**
+     * 将内核所需要的页表注册进页目录
+     * 就现在而言，内核只占用不到50个页（每个页表包含1024个页）
+     * 在此分配3个页表（12MiB）,未雨绸缪
+    */
+    for (uint32_t i = 0; i < PG_TABLE_STACK - PG_TABLE_KERNEL; i++) {
+        SET_PDE(
+            ptd,
+            kernel_pde_index + i,
+            PDE(PG_PERM_RW, PT_ADDR(ptd, PG_TABLE_KERNEL + i))
+        );
+    }
+
+    /* 首先，检查内核大小是否可以fit进这几个表（12MiB） */
+    if (kernel_pg_counts > (PG_TABLE_STACK - PG_TABLE_KERNEL) * 1024) {
+        /**
+         * Error: require more pages
+         * here should do something else other than head into blocking
+        */
+       while (1);
+    }
+
+    /* 计算内核.text段的物理地址 */
+    uintptr_t kernel_pm = V2P(&__kernel_start);
+
+    /* 重映射内核到高半区地址（>=0xC0000000） */
+    for (uint32_t i = 0; i < kernel_pg_counts; i++) {
+        SET_PTE(
+            ptd,
+            PG_TABLE_KERNEL,
+            kernel_pte_index + i,
+            PTE(PG_PERM_RW, kernel_pm + (i << 12));
+        );
+    }
+
+    /* 最后一个entry用于循环映射 */
+    SET_PDE(
+        ptd,
+        1023,
+        PDE(T_SELF_REF_PERM, ptd)
+    );
+}
+
+uint32_t __save_subset(uint8_t* destination, uint8_t* base, unsigned int size) {
+    unsigned int i = 0;
+    for (; i < size; i++) {
+        *(destination + i) = *(base + i);
+    }
+    return i;
+}
+
+void _save_multiboot_info(multiboot_info_t* info, uint8_t* destination) {
+    uint32_t current = 0;
+    uint8_t* info_b = (uint8_t*)info;
+    for (; current < sizeof(multiboot_info_t); current++) {
+        *(destination + current) = *(info_b + current);
+    }
+
+    ((multiboot_info_t*)destination)->mmap_addr = (uintptr_t)destination + current;
+    current += __save_subset(destination + current, (uint8_t*)info->drives_addr, info->drives_length);
+}
+
+void _hhk_init(ptd_t* ptd, uint32_t kpg_size) {
+    /**
+     * 初始化kpg全为0
+     * GRUB会在这里留下一堆垃圾
+    */
+    uint8_t* kpg = (uint8_t*) ptd;
+    for (uint32_t i = 0; i < kpg_size; i++) {
+        *(kpg + i) = 0;
+    }
+
+    _init_page(ptd);
+}

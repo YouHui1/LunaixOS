@@ -125,6 +125,10 @@ struct multiboot_info
     multiboot_uint32_t mmap_length;
     multiboot_uint32_t mmap_addr;
 
+    /* Drive Info buffer */
+    multiboot_uint32_t drives_length;
+    multiboot_uint32_t drives_addr;
+
     /* ROM configuration table */
     multiboot_uint32_t config_table;
 

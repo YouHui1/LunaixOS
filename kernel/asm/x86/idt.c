@@ -1,6 +1,6 @@
-#include <lunaix/arch/idt.h>
-#include <lunaix/interrupts/types.h>
-#include <lunaix/interrupts/interrupts.h>
+#include <arch/x86/idt.h>
+#include <arch/x86/types.h>
+#include <arch/x86/interrupts.h>
 #include <stdint.h>
 
 #define IDT_ENTRY 32
