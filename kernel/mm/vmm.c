@@ -56,11 +56,11 @@ void* vmm_map_page(void* va, void* pa, pt_addr dattr, pt_addr tattr) {
 
     uintptr_t pd_offset = PD_INDEX(va);
     uintptr_t pt_offset = PT_INDEX(va);
-    ptd_t* ptd = PTD_BASE_VADDR;
+    ptd_t* ptd = (ptd_t*)PTD_BASE_VADDR;
 
     /* 在页表与页目录中找到一个可用的空位进行映射（位于va或其附近） */
     ptd_t* pde = ptd[pd_offset];
-    pt_t* pt = (uintptr_t)(PT_BASE_VADDR | (pd_offset << 12));
+    pt_t* pt = (uintptr_t)PT_VADDR(pd_offset);
     while (pde && pd_offset < 1024) {
         if (pt_offset == 1024) {
             pd_offset++;

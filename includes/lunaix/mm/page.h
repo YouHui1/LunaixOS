@@ -4,6 +4,32 @@
 #include <stdint.h>
 #include <lunaix/constants.h>
 
+/**
+ * @brief PDE: page directory entry 页目录项
+ * 每个PDE都包含一个指向页表的指针
+ * PDE结构
+ *
+ * |<------ 31~12------>|<------ 11~0 --------->| 比特
+ *                      |b a 9 8 7 6 5 4 3 2 1 0|
+ * |--------------------|-|-|-|-|-|-|-|-|-|-|-|-| 占位
+ * |<-------index------>| AVL |G|P|0|A|P|P|U|R|P| 属性
+ *                              |S|   |C|W|/|/|
+ *                                    |D|T|S|W|
+ */
+
+/**
+ * @brief PTE: page table entry 页表项
+ * 每个页表项包含物理页的相关信息
+ * PTE结构
+ *
+ * |<------ 31~12------>|<------ 11~0 --------->| 比特
+ *                      |b a 9 8 7 6 5 4 3 2 1 0|
+ * |--------------------|-|-|-|-|-|-|-|-|-|-|-|-| 占位
+ * |<-------index------>| AVL |G|P|D|A|P|P|U|R|P| 属性
+ *                              |A|   |C|W|/|/|
+ *                              |T|   |D|T|S|W|
+ */
+
 #define PG_MAX_ENTRIES              1024U
 #define PG_LAST_TABLE               PG_MAX_ENTRIES - 1
 #define PG_FIRST_TABLE              0

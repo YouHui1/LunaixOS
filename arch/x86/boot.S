@@ -1,3 +1,4 @@
+/* 高半核初始化部分 */
 #define __ASM__ 1
 #include <arch/x86/boot/multiboot.h>
 
@@ -10,9 +11,9 @@
     .long CHECKSUM(MB_FLAGS)
 
 .section .bss
-
-    .align 16
     .globl mb_info
+    .align 16
+    /* 为multiboot info struct 预留空间 */
     mb_info:
         .skip 4096
     /* According to System V ABI,
@@ -31,6 +32,7 @@
         2-5. Remapping the kernels
 */
 
+/* 放置kernel page directory */
 .section .kpg
     .globl _k_ptd
     _k_ptd:
@@ -56,13 +58,11 @@
 
         /*
             _hhk_init用来初始化我们高半核：
-                1. 设置GDT表
-                2. 设置IDT表（暂时，以后会拿到 kernel_init 里面）
-                3. 初始化最简单的PTD与PT（重新映射我们的内核至3GiB处，以及对相应的地方进行Identity Map）
+                1. 初始化最简单的PD与PT（重新映射我们的内核至3GiB处，以及对相应的地方进行Identity Map）
         */
 
         movl $(KPG_SIZE), 4(%esp)
-        movl $(_k_ptd - 0xC0000000), (%esp)
+        movl $(_k_ptd - 0xC0000000), (%esp) /* PTD 物理地址*/
         call _hhk_init
 
         /*
@@ -72,7 +72,7 @@
 
         /* 加载PTD基地址（物理地址） */
         movl (%esp), %eax
-        andl $0xfffff000, %eax
+        andl $0xfffff000, %eax /* 有些多余，写上比较明白一点 */
         movl %eax, %cr3
 
         /* 开启分页与地址转换 (CR0.PG=1) */

@@ -5,7 +5,6 @@
 
 #define MULTIBOOT_MAGIC 0x1BADB002
 #define CHECKSUM(flags) -(MULTIBOOT_MAGIC + flags)
-#define MB_ALIGNED_4K_MEM_MAP 0x03
 
 /* This should be in %eax. */
 #define MULTIBOOT_BOOTLOADER_MAGIC              0x2BADB002

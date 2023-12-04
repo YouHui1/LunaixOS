@@ -38,11 +38,6 @@
         movl $mb_info, (%esp)
         call _kernel_init
 
-        # 加载IDT
-        movl $_idt, 2(%esp)
-        movw _idt_limit, %ax
-        movw %ax, (%esp)
-        lidt (%esp)
 
         /*
             加载新的栈指针，位于0xffbfffff，但因为16字节对齐的需求，低四位清零。
@@ -51,6 +46,18 @@
         */
 
         mov $0xffbffff0, %esp
+
+        call _kernel_post_init
+
+        subl $6, %esp
+
+        # 加载IDT
+        movl $_idt, 2(%esp)
+        movw _idt_limit, %ax
+        movw %ax, (%esp)
+        lidt (%esp)
+
+        addl $6, %esp
 
         /* 进入内核 */
         call _kernel_main

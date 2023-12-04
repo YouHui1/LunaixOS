@@ -119,7 +119,13 @@ void _save_multiboot_info(multiboot_info_t* info, uint8_t* destination) {
     }
 
     ((multiboot_info_t*)destination)->mmap_addr = (uintptr_t)destination + current;
-    current += __save_subset(destination + current, (uint8_t*)info->drives_addr, info->drives_length);
+    current += __save_subset(destination + current, (uint8_t*)info->mmap_addr, info->mmap_length);
+
+    if (present(info->flags, MULTIBOOT_INFO_DRIVE_INFO)) {
+        ((multiboot_info_t*) destination)->drives_addr = (uintptr_t)destination + current;
+        current += __save_subset(destination + current, (uint8_t*)info->drives_addr, info->drives_length);
+    }
+
 }
 
 void _hhk_init(ptd_t* ptd, uint32_t kpg_size) {

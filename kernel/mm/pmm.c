@@ -17,6 +17,8 @@ uint8_t pm_bitmap[PM_BMP_MAX_SIZE];
 
 uintptr_t max_pg;
 
+//  ... |xxxx xxxx |
+//  ... |-->|
 void pmm_mark_page_free(uintptr_t ppn) {
     MARK_PG_AUX_VAR(ppn)
     pm_bitmap[group] = pm_bitmap[group] & ~msk;
@@ -68,7 +70,7 @@ void pmm_mark_chunk_occupied(uint32_t start_ppn, size_t page_count) {
 size_t pg_lookup_ptr;
 
 void pmm_init(uintptr_t mem_upper_lim) {
-    max_pg = (PG_ALIGN(mem_upper_lim) >> 12) + 1;
+    max_pg = (PG_ALIGN(mem_upper_lim) >> 12);
 
     pg_lookup_ptr = LOOKUP_START;
 
