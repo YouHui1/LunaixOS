@@ -33,7 +33,10 @@ void set_pd(ptd_t* pd) {
 }
 
 void vmm_init() {
-    /* TODO: */
+    /**
+     * TODO:
+     *
+     */
 }
 
 ptd_t* vmm_init_pd() {

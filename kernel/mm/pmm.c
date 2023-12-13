@@ -70,6 +70,7 @@ void pmm_mark_chunk_occupied(uint32_t start_ppn, size_t page_count) {
 size_t pg_lookup_ptr;
 
 void pmm_init(uintptr_t mem_upper_lim) {
+    /* 向下取整 */
     max_pg = (PG_ALIGN(mem_upper_lim) >> 12);
 
     pg_lookup_ptr = LOOKUP_START;

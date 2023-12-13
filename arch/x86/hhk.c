@@ -8,6 +8,10 @@
 #define SET_PTE(ptd, pt_index, pte_index, pte)       *(PT_ADDR(ptd, pt_index) + pte_index) = pte
 #define sym_val(sym)                                 (uintptr_t)(&sym)
 
+/**
+ * @brief 下面两个计算页数右移12位原因为把字节数转换为页数（单位转换）
+ */
+
 #define KERNEL_PAGE_COUNT           ((sym_val(__kernel_end) - sym_val(__kernel_start) + 0x1000 - 1) >> 12)
 #define HHK_PAGE_COUNT              ((sym_val(__init_hhk_end) - 0x100000 + 0x1000 - 1) >> 12)
 
@@ -64,7 +68,7 @@ void _init_page(ptd_t* ptd) {
      * 将内核所需要的页表注册进页目录
      * 就现在而言，内核只占用不到50个页（每个页表包含1024个页）
      * 在此分配3个页表（12MiB）,未雨绸缪
-    */
+     */
     for (uint32_t i = 0; i < PG_TABLE_STACK - PG_TABLE_KERNEL; i++) {
         SET_PDE(
             ptd,
@@ -130,6 +134,7 @@ void _save_multiboot_info(multiboot_info_t* info, uint8_t* destination) {
 
 void _hhk_init(ptd_t* ptd, uint32_t kpg_size) {
     /**
+     * kpg: kernel page struct
      * 初始化kpg全为0
      * GRUB会在这里留下一堆垃圾
     */

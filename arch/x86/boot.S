@@ -52,8 +52,8 @@
             这样，我们能够保证当分页与虚拟地址开启后，我们的内核能够访问到multiboot info table
          */
 
-        movl $mb_info, 4(%esp)
-        movl %ebx, (%esp)
+        movl $mb_info, 4(%esp) /* 第二个参数 destination */
+        movl %ebx, (%esp) /* 第一个参数 info */
         call _save_multiboot_info
 
         /*
@@ -61,8 +61,8 @@
                 1. 初始化最简单的PD与PT（重新映射我们的内核至3GiB处，以及对相应的地方进行Identity Map）
         */
 
-        movl $(KPG_SIZE), 4(%esp)
-        movl $(_k_ptd - 0xC0000000), (%esp) /* PTD 物理地址*/
+        movl $(KPG_SIZE), 4(%esp) /* 第二个参数 */
+        movl $(_k_ptd - 0xC0000000), (%esp) /* 第一个参数，PTD 物理地址*/
         call _hhk_init
 
         /*
@@ -77,7 +77,7 @@
 
         /* 开启分页与地址转换 (CR0.PG=1) */
         movl %cr0, %eax
-        orl $0x80000000, %eax
+        orl $0x80000000, %eax /* PG = 1 */
         movl %eax, %cr0
 
         addl $16, %esp

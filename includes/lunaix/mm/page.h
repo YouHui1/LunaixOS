@@ -39,6 +39,15 @@
 
 #define PG_ALIGN(addr)      ((uintptr_t)(addr) & 0xFFFFF000UL)
 
+/**
+ * @brief 虚拟地址划分
+ * |<-- 10 -->|<-- 10 -->|<-- 12 -->|
+ * |    PD    |    PT    |  Offset  |
+ * 页目录索引（PD）：高10位，用于索引页目录，得到一个页表的地址。
+ * 页表索引（PT）：中间10位，用于索引页表，得到一个物理页帧的地址。
+ * 页内偏移（Offset）：低12位，表示在物理页帧中的偏移量，用于定位到具体的字节。
+ */
+
 #define PD_INDEX(vaddr)     (((uintptr_t)(vaddr) & 0xFFC00000UL) >> 22)
 #define PT_INDEX(vaddr)     (((uintptr_t)(vaddr) & 0x003FF000UL) >> 12)
 #define PG_OFFSET(vaddr)    ((uintptr_t)(vaddr) & 0x00000FFFUL)
