@@ -80,11 +80,12 @@ void* vmm_map_page(void* va, void* pa, pt_addr dattr, pt_addr tattr) {
     }
 
     /* 页目录与所有页表已满 */
-    if (pd_offset > 1024) {
+    if (pd_offset >= 1024) {
         return NULL;
     }
 
     /* 页目录有空位，需要开辟一个新的PDE */
+    /* pde == NULL */
     uint8_t* new_pt_pa = pmm_alloc_page();
 
     /* 物理内存已满 */

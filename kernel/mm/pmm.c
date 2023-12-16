@@ -3,7 +3,7 @@
 
 #define MARK_PG_AUX_VAR(ppn)                \
     uint32_t group = ppn / 8;               \
-    uint32_t msk = (0x80U >> (ppn % 8));
+    uint32_t msk = (0x80U >> (ppn % 8))
 
 #define MARK_CHUNK_AUX_VAR(start_ppn, page_count)       \
     uint32_t group = start_ppn / 8;                     \
@@ -11,7 +11,7 @@
     uint32_t group_count = (page_count + offset) / 8;   \
     uint32_t remainder = (page_count + offset) % 8;     \
     uint32_t leading_shifts =                           \
-        (page_count + offset) < 8 ? page_count : 8 - offset;
+        (page_count + offset) < 8 ? page_count : 8 - offset
 
 uint8_t pm_bitmap[PM_BMP_MAX_SIZE];
 
@@ -20,34 +20,35 @@ uintptr_t max_pg;
 //  ... |xxxx xxxx |
 //  ... |-->|
 void pmm_mark_page_free(uintptr_t ppn) {
-    MARK_PG_AUX_VAR(ppn)
+    MARK_PG_AUX_VAR(ppn);
     pm_bitmap[group] = pm_bitmap[group] & ~msk;
 }
 
 void pmm_mark_page_occupied(uintptr_t ppn) {
-    MARK_PG_AUX_VAR(ppn)
+    MARK_PG_AUX_VAR(ppn);
     pm_bitmap[group] = pm_bitmap[group] | msk;
 }
 
 void pmm_mark_chunk_free(uintptr_t start_ppn, size_t page_count) {
-    MARK_CHUNK_AUX_VAR(start_ppn, page_count)
+    MARK_CHUNK_AUX_VAR(start_ppn, page_count);
     pm_bitmap[group] &=
         ~(((1U << leading_shifts) - 1) << (8 - offset - leading_shifts));
 
     group++;
 
     /* prevent unsigned overflow */
-    for (uint32_t i = 0; group_count != 0 && i < group_count - 1; i++, group++) {
+    // for (uint32_t i = 0; group_count != 0 && i < group_count - 1; i++, group++) {
+    for (uint32_t i = 0; i < group_count - 1; i++, group++) {
         pm_bitmap[group] = 0;
     }
 
     pm_bitmap[group] &=
-        ~(((1U << (page_count > 8 ? remainder : 0)) - 1) << (8 - remainder));
+        ~(((1U << (page_count + offset > 8 ? remainder : 0)) - 1) << (8 - remainder));
 
 }
 
 void pmm_mark_chunk_occupied(uint32_t start_ppn, size_t page_count) {
-    MARK_CHUNK_AUX_VAR(start_ppn, page_count)
+    MARK_CHUNK_AUX_VAR(start_ppn, page_count);
 
     pm_bitmap[group] |=
         (((1U << leading_shifts) - 1) << (8 - offset - leading_shifts));
@@ -60,7 +61,7 @@ void pmm_mark_chunk_occupied(uint32_t start_ppn, size_t page_count) {
     }
 
     pm_bitmap[group] |=
-        (((1U << (page_count > 8 ? remainder : 0)) - 1) << (8 - remainder));
+        (((1U << (page_count + offset > 8 ? remainder : 0)) - 1) << (8 - remainder));
 
 }
 
